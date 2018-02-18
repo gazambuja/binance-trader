@@ -112,7 +112,7 @@ class Trading():
         The specified limit will try to sell until it reaches.
         If not successful, the order will be canceled.
         '''
-        partial_status = None
+        self.partial_status = None
         time.sleep(self.WAIT_TIME_CHECK_BUY)
         buy_order = Orders.get_order(symbol, orderId)
         if not buy_order:
@@ -335,10 +335,10 @@ class Trading():
 
     def check_partial_order(self, symbol, orderId, price):
         time.sleep(self.WAIT_TIME_BUY_SELL)
-        partial_status = "hold"
+        self.partial_status = "hold"
         quantity = 0
 
-        while (partial_status == "hold"):
+        while (self.partial_status == "hold"):
             order = Orders.get_order(symbol, orderId)
 
             if order['status'] == 'PARTIALLY_FILLED':
@@ -350,10 +350,10 @@ class Trading():
                     time.sleep(self.WAIT_TIME_CHECK_HOLD)
                 else:
                     self.cancel(symbol, orderId)
-                    partial_status = "partial"
+                    self.partial_status = "partial"
 
             else:
-                partial_status = "sell"
+                self.partial_status = "sell"
                 quantity = self.format_quantity(float(order['executedQty']))
 
         return quantity

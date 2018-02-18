@@ -1,27 +1,29 @@
-# Binance Trader (RC 2)
+# Binance Trader [MZ Fork by Mark & FitzZZ]
 
-This is an experimental bot for auto trading the binance.com exchange. [@yasinkuyu](https://twitter.com/yasinkuyu)
+This is an experimental bot for auto trading the binance.com exchange. 
+
+Visit us on Discord [here](https://discord.gg/zQZNmbB)!
 
 ![Screenshot](https://github.com/yasinkuyu/binance-trader/blob/master/img/screenshot.png)
 
 ## Configuration
 
-1. Signup Binance ( Referral url: https://www.binance.com/?ref=10701111 )
+1. Signup for Binance ([here](https://www.binance.com/?ref=16671900))
 2. Enable Two-factor Authentication    
-3. Go API Center, https://www.binance.com/userCenter/createApi.html
+3. Go [API Center](https://www.binance.com/userCenter/createApi.html)
 4. Create New Key
 
         [✓] Read Info [✓] Enable Trading [X] Enable Withdrawals 
-5. Rename config.sample.py to config.py / orders.sample.db to orders.db
-6. Get an API and Secret Key, insert into config.py
+5. Rename config.sample.py to config.py AND orders.sample.db to orders.db
+6. Get an API and Secret Key, insert into config.py. Don't touch the orders.db.
 
         API key for account access
         api_key = ''
         Secret key for account access
         api_secret = ''
 
-        API Docs: https://www.binance.com/restapipub.html
 7. Optional: run as an excutable application in Docker containers
+8. Send a small tip to the creators if it works for you :-)
 
 ## Requirements
 
@@ -33,10 +35,13 @@ This is an experimental bot for auto trading the binance.com exchange. [@yasinku
         import os
         import sys
         import time
+        import datetime
         import config
         import argparse
         import threading
         import sqlite3
+
+    Reportedly also works with Python 3.X.
 
 ## Usage
 
@@ -100,6 +105,21 @@ This is an experimental bot for auto trading the binance.com exchange. [@yasinku
 
     docker run trader
  
+## Tip the fork maintainers
+
+#### Mark:
+To be added...
+#### FitzZZ:
+If you want to support my work or just leave a little thanks, I'd appreciate a small donation towards my coffee fund :-) 
+
+  - BTC: 1KtsAMGCkJPv3R8fa2zCxznB3PhdSPDf9d
+  - ETH: 0x4c336e3ea18756bef54d9d022a5788352304dbed
+  - LTC: LZaWAVX35qsiYyG7VVvpwg7n9browvm3Kw
+
+Wanna get into crypto:
+- [Coinbase](https://www.coinbase.com/join/5a383d1dada1050742ff705a) to buy cypto with fiat.
+- [Binance](https://www.binance.com/?ref=16671900) is my preferred exchange to trade coins.
+
 ## DISCLAIMER
 
     I am not responsible for anything done with this bot. 
@@ -147,13 +167,12 @@ This is an experimental bot for auto trading the binance.com exchange. [@yasinku
 
     Code released under the MIT License.
 
-#### Tip Box
-[Yasin](http://yasinkuyu.net/wallet) 
+## Credits to original repo dudes
+Original idea & code by [@yasinkuyu](https://twitter.com/yasinkuyu)
 
-#### WeSpeakCrypto
+Tip him: [Yasin](http://yasinkuyu.net/wallet) 
 
-    BTC wallet: 182Ew6JK9Mspw4BszdBP7RgpdWf6STe46G
-    LTC wallet: LXgNmMPied4AiGKAsE1kY2M9BRaV3yxDC1
-    ETH wallet: 0xed8100b70e15d9fcd53f1d989c67775bf55e4475
+Early Enhancements by [@wespeakcrypto]
+Tip him:
 
----
+BTC wallet: 182Ew6JK9Mspw4BszdBP7RgpdWf6STe46G / LTC wallet: LXgNmMPied4AiGKAsE1kY2M9BRaV3yxDC1 / ETH wallet: 0xed8100b70e15d9fcd53f1d989c67775bf55e4475

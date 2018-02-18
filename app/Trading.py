@@ -265,7 +265,7 @@ class Trading():
     def stop(self, symbol, quantity, orderId, sell_price):
         # If the target is not reached, stop-loss.
         stop_order = Orders.get_order(symbol, orderId)
-
+        old_qty = quantity
         if float(stop_order['executedQty']) > 0:
  
             quantity = self.format_quantity(float(stop_order['executedQty']))
@@ -297,11 +297,13 @@ class Trading():
             self.order_id = 0
             print (datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S ') + symbol + ' Sell partially filled, hold sell position to prevent dust coin. Continue trading...')
             flag2 = 0
+            new_quantity = old_qty - quantity 
+            sello = Orders.sell_market(symbol, new_quantity)
             while (flag2!=1):
                 try:
                     sell_id = sello['orderId']
                 except Exception, error:
-                    sello = Orders.sell_market(symbol, quantity)
+                    sello = Orders.sell_market(symbol, new_quantity)
                 else:
                     flag2 = 1
                     break

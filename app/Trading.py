@@ -111,17 +111,12 @@ class Trading():
         The specified limit will try to sell until it reaches.
         If not successful, the order will be canceled.
         '''
+        
         time.sleep(self.WAIT_TIME_CHECK_BUY)
-        confirm  = False
-
-        while not confirm:
-                sleep(1)
-                buy_order = Orders.get_order(symbol, orderId)
-                if not buy_order:
-                        print ("SERVER DELAY! Rechecking...")
-                        confirm = False
-                else:
-                        break
+        buy_order = Orders.get_order(symbol, orderId)
+        if not buy_order:
+            print ("SERVER DELAY! Rechecking...")
+            return
 
         if buy_order['status'] == 'FILLED' and buy_order['side'] == "BUY":
             print ("Buy order filled... Try sell...")
@@ -141,26 +136,49 @@ class Trading():
 
             self.cancel(symbol, orderId)
             print ("Buy order fail (Not filled) Cancel order...")
+            
+        order_status = None
+        order_side = None
+        check_order = Orders.get_order(symbol, orderId)
+
+        flago = 0
+        while (flago != 1):
+            try:
+                order_status = (check_order['status'])
+            except KeyError:
+                print ("Keyerror")
+                check_order = Orders.get_order(symbol, orderId)
+            else:
+                flago = 1
+
+        flago = 0
+        while (flago != 1):
+            try:
+                order_side = (check_order['side'])
+            except KeyError:
+                print ("Keyerror")
+                check_order = Orders.get_order(symbol, orderId)
+            else:
+                flago = 1        
+                
+        print('Binance Order Status: %s, Binance Order Side: %s, Internal bot status: %s' % (order_status, order_side, self.bot_status))
+        if order_status == "CANCELED" and self.bot_status != "sell":
             self.bot_status = "cancel"
             self.order_id = 0
+            orderId = 0
             return
-        sleep(1)    
-        if self.bot_status == "cancel":
-            return
-        else:
-            print ("Continue..")
-    
+        
         sell_id = None
 
-        while True:
+        flago = 0
+        while (flago != 1):
             sleep(1)
             try:
                 sell_id = Orders.sell_limit(symbol, quantity, sell_price)['orderId']
             except Exception, error:
                 quantity = quantity - 1         
             else:
-                break
-
+                flago = 1
                 print("Order placed. Confirming...")
                 sleep(1)
 
@@ -373,8 +391,10 @@ class Trading():
 
         # Target buy price, add little increase #87
         buyPrice = lastBid + (lastBid * self.increasing / 100)
+    #   buyPrice = lastBid + (lastBid * 0.01)
         # Target sell price, decrease little 
         sellPrice = lastAsk - (lastAsk * self.decreasing / 100)
+    #    sellPrice = lastAsk - (lastAsk * 0.01)
 
         # Spread ( profit )
         profitableSellingPrice = self.calc(lastBid)

@@ -89,15 +89,15 @@ class Orders():
             order = client.query_order(symbol, orderId)
 
             if 'msg' in order:
-                return False
                 Messages.get(order['msg']) # TODO
+                return False
 
             return order
 
         except Exception as e:
             print ('go: %s' % (e))
             return False
-    
+
     @staticmethod
     def get_order_status(symbol, orderId):
         try:
@@ -119,7 +119,7 @@ class Orders():
     
             ticker = client.get_ticker(symbol)
  
-            return float(ticker['lastPrice'])
+            return ticker
         except Exception as e:
             print ('gt: %s' % (e))
     
@@ -136,3 +136,15 @@ class Orders():
             
         except Exception as e:
             return
+
+    @staticmethod
+    def get_balance(symbol="BTC"):
+        try:
+
+            balances = client.get_account()
+            balances['balances'] = {item['asset']: item for item in balances['balances']}
+
+            return balances['balances'][symbol]['free']
+
+        except Exception as e:
+            print ('gb: %s' % (e))

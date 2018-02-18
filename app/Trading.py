@@ -13,8 +13,8 @@ from Database import Database
 from Orders import Orders
 from Tools import Tools
 from time import sleep
-from time import sleep
 from sys import exit
+
 class Trading():
 
     # Define trade vars

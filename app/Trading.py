@@ -162,12 +162,13 @@ class Trading():
             else:
                 flago = 1        
                 
-        print('Binance Order Status: %s, Binance Order Side: %s, Internal bot status: %s' % (order_status, order_side, self.bot_status))
-        if order_status == "CANCELED" and partial_status == None:
-            self.bot_status = "cancel"
-            self.order_id = 0
-            orderId = 0
-            return
+        print('Binance Order Status: %s, Binance Order Side: %s, Partial status: %s' % (order_status, order_side, self.partial_status))
+        if order_status == "CANCELED":
+            if self.partial_status == None:
+                self.bot_status = "cancel"
+                self.order_id = 0
+                orderId = 0
+                return
         
         sell_id = None
 

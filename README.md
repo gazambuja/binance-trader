@@ -1,4 +1,4 @@
-# Binance Trader [MZ Fork by Mark & FitzZZ]
+# Binance Trader [MZ Fork]
 
 This is an experimental bot for auto trading the binance.com exchange. 
 

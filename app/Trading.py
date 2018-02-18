@@ -137,7 +137,8 @@ class Trading():
 
             self.cancel(symbol, orderId)
             print ("Buy order fail (Not filled) Cancel order...")
-            
+        sleep(5)
+        print ("Checking..")
         order_status = None
         order_side = None
         check_order = Orders.get_order(symbol, orderId)
@@ -167,7 +168,6 @@ class Trading():
             if self.partial_status == None:
                 self.bot_status = "cancel"
                 self.order_id = 0
-                orderId = 0
                 return
         
         sell_id = None
@@ -296,6 +296,15 @@ class Trading():
         elif status == 'PARTIALLY_FILLED':
             self.order_id = 0
             print (datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S ') + symbol + ' Sell partially filled, hold sell position to prevent dust coin. Continue trading...')
+            flag2 = 0
+            while (flag2!=1):
+                try:
+                    sell_id = sello['orderId']
+                except Exception, error:
+                    sello = Orders.sell_market(symbol, quantity)
+                else:
+                    flag2 = 1
+                    break
             time.sleep(self.WAIT_TIME_CHECK_SELL)
             return True
 

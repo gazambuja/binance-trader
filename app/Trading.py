@@ -13,8 +13,8 @@ from Database import Database
 from Orders import Orders
 from Tools import Tools
 from time import sleep
+from time import sleep
 from sys import exit
-
 class Trading():
 
     # Define trade vars
@@ -33,6 +33,7 @@ class Trading():
 
     # Check bot status
     bot_status = "scan"
+    partial_status = None
 
     # Define static vars
     WAIT_TIME_BUY_SELL = 2 # seconds
@@ -111,7 +112,7 @@ class Trading():
         The specified limit will try to sell until it reaches.
         If not successful, the order will be canceled.
         '''
-        
+        partial_status = None
         time.sleep(self.WAIT_TIME_CHECK_BUY)
         buy_order = Orders.get_order(symbol, orderId)
         if not buy_order:
@@ -162,7 +163,7 @@ class Trading():
                 flago = 1        
                 
         print('Binance Order Status: %s, Binance Order Side: %s, Internal bot status: %s' % (order_status, order_side, self.bot_status))
-        if order_status == "CANCELED" and self.bot_status != "sell":
+        if order_status == "CANCELED" and partial_status == None:
             self.bot_status = "cancel"
             self.order_id = 0
             orderId = 0
@@ -348,7 +349,7 @@ class Trading():
                     time.sleep(self.WAIT_TIME_CHECK_HOLD)
                 else:
                     self.cancel(symbol, orderId)
-                    partial_status = "sell"
+                    partial_status = "partial"
 
             else:
                 partial_status = "sell"

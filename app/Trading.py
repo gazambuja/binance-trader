@@ -137,7 +137,7 @@ class Trading():
 
             self.cancel(symbol, orderId)
             print ("Buy order fail (Not filled) Cancel order...")
-        sleep(5)
+            sleep(5)
         print ("Checking..")
         order_status = None
         order_side = None

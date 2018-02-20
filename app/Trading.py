@@ -113,7 +113,7 @@ class Trading():
             return orderId
 
         except Exception as e:
-            print log_prefix('bl: %s' % (e))
+            print self.log_prefix('bl: %s' % (e))
            # time.sleep(self.WAIT_TIME_BUY_SELL)
             WAIT_TIME_STOP_LOSS = 600
             self.bot_status = "cancel"
@@ -130,14 +130,14 @@ class Trading():
         time.sleep(self.WAIT_TIME_CHECK_BUY)
         buy_order = Orders.get_order(symbol, orderId)
         if not buy_order:
-            print log_prefix("SERVER DELAY! Rechecking...")
+            print self.log_prefix("SERVER DELAY! Rechecking...")
             return
 
         if buy_order['status'] == 'FILLED' and buy_order['side'] == "BUY":
-            print log_prefix("Buy order filled... Try sell...")
+            print self.log_prefix("Buy order filled... Try sell...")
 
         elif buy_order['status'] == 'PARTIALLY_FILLED' and buy_order['side'] == "BUY":
-            print log_prefix("Buy order partially filled... Wait 1 more second...")
+            print self.log_prefix("Buy order partially filled... Wait 1 more second...")
             quantity = self.check_partial_order(symbol, orderId, sell_price)
         else:
             flago = 0
@@ -145,14 +145,14 @@ class Trading():
                 try:
                     orderId = (buy_order['orderId'])
                 except KeyError:
-                    print log_prefix("Keyerror")  
+                    print self.log_prefix("Keyerror")  
                 else:
                     flago = 1
 
             self.cancel(symbol, orderId)
-            print log_prefix("Buy order fail (Not filled) Cancel order...")
+            print self.log_prefix("Buy order fail (Not filled) Cancel order...")
             sleep(5)
-        print log_prefix("Checking..")
+        print self.log_prefix("Checking..")
         order_status = None
         order_side = None
         check_order = Orders.get_order(symbol, orderId)
@@ -162,7 +162,7 @@ class Trading():
             try:
                 order_status = (check_order['status'])
             except KeyError:
-                print log_prefix("Keyerror")
+                print self.log_prefix("Keyerror")
                 check_order = Orders.get_order(symbol, orderId)
             else:
                 flago = 1
@@ -172,12 +172,12 @@ class Trading():
             try:
                 order_side = (check_order['side'])
             except KeyError:
-                print log_prefix("Keyerror")
+                print self.log_prefix("Keyerror")
                 check_order = Orders.get_order(symbol, orderId)
             else:
                 flago = 1        
                 
-        print log_prefix('Binance Order Status: %s, Binance Order Side: %s, Partial status: %s' % (order_status, order_side, self.partial_status))
+        print self.log_prefix('Binance Order Status: %s, Binance Order Side: %s, Partial status: %s' % (order_status, order_side, self.partial_status))
         if order_status == "CANCELED":
             if self.partial_status == None:
                 self.bot_status = "cancel"
@@ -203,16 +203,16 @@ class Trading():
                 quantity = quantity - 1         
             else:
                 flago = 1
-                print log_prefix("Order placed. Confirming...")
+                print self.log_prefix("Order placed. Confirming...")
                 sleep(1)
 
-        print log_prefix("Sell order created" )
+        print self.log_prefix("Sell order created" )
 
         if Orders.get_order(symbol, sell_id)['status'] == 'FILLED':
 
-            print log_prefix('Sell order (Filled) id: %d' % sell_id)
-            print log_prefix('LastPrice : %.8f' % last_price)
-            print log_prefix('Profit: %%%s. Buy price: %.8f Sell price: %.8f' % (self.option.profit, float(buy_order['price']), sell_price))
+            print self.log_prefix('Sell order (Filled) id: %d' % sell_id)
+            print self.log_prefix('LastPrice : %.8f' % last_price)
+            print self.log_prefix('Profit: %%%s. Buy price: %.8f Sell price: %.8f' % (self.option.profit, float(buy_order['price']), sell_price))
 
             self.order_id = 0
             self.bot_status = "sell"
@@ -241,20 +241,20 @@ class Trading():
                         break
 
                 lossprice = sell_price - (sell_price * self.stop_loss / 100)
-                print log_prefix('Hold...')   
-                print log_prefix('LastPrice : %.8f' % last_price)
-                print log_prefix('Stop-loss, sell limit, %s' % (lossprice))
+                print self.log_prefix('Hold...')   
+                print self.log_prefix('LastPrice : %.8f' % last_price)
+                print self.log_prefix('Stop-loss, sell limit, %s' % (lossprice))
                 if Orders.get_order(symbol, sell_id)['status'] == 'FILLED':
                     self.order_id = 0
                     self.bot_status = "sell"
                     flag = 1
                 if lastPrice <= lossprice:
                     flag = 1
-                    print log_prefix('Waiting to stop loss...')
+                    print self.log_prefix('Waiting to stop loss...')
                     time.sleep(self.WAIT_TIME_CHECK_SELL)
                     self.stop(symbol, quantity, sell_id, sell_price)
                     time.sleep(self.WAIT_TIME_STOP_LOSS)
-            print log_prefix('Sold! Continue trading...')
+            print self.log_prefix('Sold! Continue trading...')
             self.order_id = 0
             self.bot_status = "sell"
         else:
@@ -277,9 +277,9 @@ class Trading():
                     except Exception, error:
                         ticker = Orders.get_ticker(symbol)
                     else:
-                        print log_prefix('Status: %s Current price: %s Sell price: %s' % (sell_status, lastPrice, sell_price))
+                        print self.log_prefix('Status: %s Current price: %s Sell price: %s' % (sell_status, lastPrice, sell_price))
                         break
-            print log_prefix('Sold! Continue trading...')
+            print self.log_prefix('Sold! Continue trading...')
             order_id = 0
             self.order_id = 0
             self.bot_status = "sell"
@@ -301,7 +301,7 @@ class Trading():
                 # Stop loss
                 lastBid, lastAsk = Orders.get_order_book(symbol)
                 sello = Orders.sell_market(symbol, quantity)
-                print log_prefix('Stop-loss, sell market, %s' % (lastAsk))
+                print self.log_prefix('Stop-loss, sell market, %s' % (lastAsk))
                 flag2 = 0
                 while (flag2!=1):
                     try:
@@ -312,12 +312,12 @@ class Trading():
                         flag2 = 1
                         break
             else:
-                print log_prefix('Cancel did not work... Might have been sold before stop loss...')
+                print self.log_prefix('Cancel did not work... Might have been sold before stop loss...')
                 return True
 
         elif status == 'PARTIALLY_FILLED':
             self.order_id = 0
-            print log_prefix('Sell partially filled, hold sell position to prevent dust coin. Continue trading...')
+            print self.log_prefix('Sell partially filled, hold sell position to prevent dust coin. Continue trading...')
             flag2 = 0
             new_quantity = old_qty - quantity 
             sello = Orders.sell_market(symbol, new_quantity)
@@ -334,7 +334,7 @@ class Trading():
 
         elif status == 'FILLED':
             self.order_id = 0
-            print log_prefix('Order filled before sell at loss!')
+            print self.log_prefix('Order filled before sell at loss!')
             return True
         else:
             return False
@@ -358,7 +358,7 @@ class Trading():
             return lastBid + (lastBid * self.option.profit / 100)
 
         except Exception as e:
-            print log_prefix('c: %s' % (e))
+            print self.log_prefix('c: %s' % (e))
             return
 
     def checkorder(self):
@@ -375,11 +375,11 @@ class Trading():
             order = Orders.get_order(symbol, orderId)
 
             if order['status'] == 'PARTIALLY_FILLED':
-                print log_prefix("Order still partially filled...")
+                print self.log_prefix("Order still partially filled...")
                 quantity = self.format_quantity(float(order['executedQty']))
 
                 if self.min_notional > quantity * price:
-                    print log_prefix("Can't sell below minimum allowable price. Hold for 10 seconds...")
+                    print self.log_prefix("Can't sell below minimum allowable price. Hold for 10 seconds...")
                     time.sleep(self.WAIT_TIME_CHECK_HOLD)
                 else:
                     self.cancel(symbol, orderId)
@@ -455,7 +455,7 @@ class Trading():
 
         # Screen log
         if self.option.prints and self.order_id == 0:
-            print log_prefix('price:%.8f buyp:%.8f sellp:%.8f-bid:%.8f ask:%.8f' % (lastPrice, buyPrice, profitableSellingPrice, lastBid, lastAsk))
+            print self.log_prefix('price:%.8f buyp:%.8f sellp:%.8f-bid:%.8f ask:%.8f' % (lastPrice, buyPrice, profitableSellingPrice, lastBid, lastAsk))
 
         '''
         Did profit get caught
@@ -502,7 +502,7 @@ class Trading():
         symbol_info = Orders.get_info(symbol)
 
         if not symbol_info:
-            print log_prefix("Invalid symbol, please try again...")
+            print self.log_prefix("Invalid symbol, please try again...")
             exit(1)
 
         symbol_info['filters'] = {item['filterType']: item for item in symbol_info['filters']}
@@ -561,7 +561,7 @@ class Trading():
 
         # minQty = minimum order quantity
         if quantity < minQty:
-            print log_prefix("Invalid quantity, minQty: %.8f (u: %.8f)" % (minQty, quantity))
+            print self.log_prefix("Invalid quantity, minQty: %.8f (u: %.8f)" % (minQty, quantity))
             valid = False
 
         if price < minPrice:

@@ -14,6 +14,7 @@ from Orders import Orders
 from Tools import Tools
 from time import sleep
 from time import sleep
+from binance.client import Client
 from sys import exit
 class Trading():
 
@@ -25,7 +26,14 @@ class Trading():
 
     # Buy/Sell qty
     quantity = 0
+    
+    # Define Custom import vars
+    client = BinanceAPI(config.api_key, config.api_secret)
 
+    original_qty = client.get_asset_balance(asset=symbol)['free']
+    all_qty = 0
+    err_qty = 0
+    
     # float(step_size * math.floor(float(free)/step_size))
     step_size = 0
     tick_size = 0
@@ -43,7 +51,7 @@ class Trading():
     WAIT_TIME_PAUSE_BUY = 60 # seconds
     WAIT_TIME_STOP_LOSS = 600 # seconds
     WAIT_TIME_SELL = 2 # seconds
-
+    
     def decimal_formatter(number):
             return format(number, '.8f')
 
@@ -79,7 +87,7 @@ class Trading():
 
     def buy(self, symbol, quantity, buyPrice):
 
-        # Do you have an open order?
+        # Check last order
         self.checkorder()
 
         try:
@@ -171,7 +179,15 @@ class Trading():
                 return
         
         sell_id = None
+        
+        self.all_qty = client.get_asset_balance(asset=symbol)['free']
+        try:
+            self.err_qty = self.all_qty - self.original_qty
+        except Exception, error:
+            self.err_qty = 0
 
+        quantity = self.format_quantity(quantity + elf.err_qty)
+      
         flago = 0
         while (flago != 1):
             sleep(1)

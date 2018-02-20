@@ -565,7 +565,7 @@ class Trading():
             valid = False
 
         if price < minPrice:
-            print log_prefix("Invalid price, minPrice: %.8f (u: %.8f)" % (minPrice, price))
+            print self.log_prefix("Invalid price, minPrice: %.8f (u: %.8f)" % (minPrice, price))
             valid = False
 
         # minNotional = minimum order value (price * quantity)

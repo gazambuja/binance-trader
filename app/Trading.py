@@ -117,7 +117,7 @@ class Trading():
             # Database log
             Database.write([orderId, symbol, 0, buyPrice, 'BUY', quantity, self.option.profit])
 
-            print log_wrap('Buy order created id:%d, q:%.8f, p:%.8f' % (orderId, quantity, float(buyPrice)))
+            print self.log_wrap('Buy order created id:%d, q:%.8f, p:%.8f' % (orderId, quantity, float(buyPrice)))
 
             self.order_id = orderId
 

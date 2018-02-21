@@ -38,6 +38,7 @@ class Trading():
     all_qty = 0
     err_qty = 0
     sell_qty = 0
+    use_stopfile = False
 
     sym = None
 
@@ -82,6 +83,19 @@ class Trading():
             percent = (float(final) - float(initial)) / float(initial) * 100
             return format(percent, '.2f')
 
+    #Function to allow an external file stop the bot after the last sell/cancel
+    def stop_bot( self ):
+        try:
+              stopfile = open("stopfile.txt", "r")
+              filetext = stopfile.read()
+              
+              if (filetext == "stop"):
+                 print self.log_wrap('STOP sign read in file. Stopping bot.')
+                 quit()
+
+        except Exception as e:
+              print 'Stopfile couldn´t be opened.'
+
     #Function to build console output with proper timestamps, coin symbols and seperators  ... oh and juicy counters!
     def log_wrap( self, ttext ):
         ttime = datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S')
@@ -115,6 +129,7 @@ class Trading():
         self.decreasing = self.option.decreasing
         self.sym = self.option.symbol
         self.original_qty = self.option.hodl_qty
+        self.use_stopfile = self.option.stopfile
         
     def buy(self, symbol, quantity, buyPrice):
 
@@ -652,9 +667,13 @@ class Trading():
         while (cycle <= self.option.loop):
 
             startTime = time.time()
-
+            
+            #Check for stopfile if active, if so, check if stop sign exists
+            if (self.use_stopfile == True):
+                self.stop_bot()
+    
             self.action(symbol)
-
+            
             endTime = time.time()
 
             if endTime - startTime < self.wait_time:

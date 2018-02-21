@@ -15,11 +15,11 @@ class Orders():
     @staticmethod
     def buy_limit(symbol, quantity, buyPrice):
         order = client.buy_limit(symbol, quantity, buyPrice) 
-	while (order is None ):
+        while (order is None ):
             try:
                 order = client.sell_limit(symbol, quantity, buyPrice) 
-	    except ValueError:
-		order = None
+            except ValueError:
+                order = None
             else:
                 break
 #        order = client.buy_limit(symbol, quantity, buyPrice)

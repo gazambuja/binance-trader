@@ -495,14 +495,13 @@ class Trading():
 
         # Check working mode
         if self.option.mode == 'range':
-
             buyPrice = float(self.option.buyprice)
             sellPrice = float(self.option.sellprice)
             profitableSellingPrice = sellPrice
 
         # Screen log
         if self.option.prints and self.order_id == 0:
-            print (self.log_wrap('price:%.8f buyp:%.8f sellp:%.8f-bid:%.8f ask:%.8f' % (lastPrice, buyPrice, profitableSellingPrice, lastBid, lastAsk)))
+            print (self.log_wrap('price:%.8f buyp:%.8f sellp:%.8f-bid:%.8f ask:%.8f qty:%.8f' % (lastPrice, buyPrice, profitableSellingPrice, lastBid, lastAsk, quantity)))
 
         '''
         Did profit get caught

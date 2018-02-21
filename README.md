@@ -28,8 +28,10 @@ Visit us on Discord [here](https://discord.gg/zQZNmbB)!
 ## Requirements
 
     sudo easy_install -U requests
+    sudo easy_install -U python-binance
     or 
     sudo pip install requests
+    sudo pip install python-binance
     
     Python 2.7
         import os
@@ -72,6 +74,8 @@ Visit us on Discord [here](https://discord.gg/zQZNmbB)!
     --prints       Scanning Profit Screen Print (default True)
     --loop         Loop (default 0 unlimited)
     
+    --hodl_qty     How much coin should be kept in wallet and not be sold (default 0)    
+    
     --mode         Working modes profit or range (default profit)
                    profit: Profit Hunter. Find defined profit, buy and sell. (Ex: 1.3% profit)
                    range: Between target two price, buy and sell. (Ex: <= 0.00000780 buy - >= 0.00000790 sell )
@@ -98,6 +102,7 @@ Visit us on Discord [here](https://discord.gg/zQZNmbB)!
         trader.py --symbol NEOBTC --amount 0.1 --profit 1.1
         trader.py --symbol ETHUSDT --quantity 0.3 --profit 1.5
         ...
+      
     
 ## Run in a Docker container
 

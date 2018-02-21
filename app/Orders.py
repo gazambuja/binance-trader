@@ -1,30 +1,53 @@
+
 # -*- coding: UTF-8 -*-
 # @yasinkuyu
 import config 
 
 from BinanceAPI import BinanceAPI
+from binance.client import Client
 from Messages import Messages
 
 # Define Custom import vars
 client = BinanceAPI(config.api_key, config.api_secret)
-
+client2 = Client(config.api_key, config.api_secret)
 class Orders():
- 
+     
     @staticmethod
     def buy_limit(symbol, quantity, buyPrice):
-
-        order = client.buy_limit(symbol, quantity, buyPrice)
+        order = client.buy_limit(symbol, quantity, buyPrice) 
+	while (order is None ):
+            try:
+                order = client.sell_limit(symbol, quantity, buyPrice) 
+	    except ValueError:
+		order = None
+            else:
+                break
+#        order = client.buy_limit(symbol, quantity, buyPrice)
 
         if 'msg' in order:
             Messages.get(order['msg'])
 
         # Buy order created.
         return order['orderId']
+    
+    @staticmethod
+    def get_asset(symbol):
+        asset = symbol[:-3]
+        orig_quantity = client2.get_asset_balance(asset=asset)  
 
+        return orig_quantity
+    
     @staticmethod
     def sell_limit(symbol, quantity, sell_price):
-
-        order = client.sell_limit(symbol, quantity, sell_price)  
+        order = client.sell_limit(symbol, quantity, sell_price) 
+        while (order is None):
+            try:
+                order = client.sell_limit(symbol, quantity, sell_price) 
+            except ValueError:
+                order = None
+            else:
+                break	 
+#        order = client.sell_limit(symbol, quantity, sell_price)  
 
         if 'msg' in order:
             Messages.get(order['msg'])

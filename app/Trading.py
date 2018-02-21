@@ -9,6 +9,7 @@ import datetime
 import config
 
 # Define Custom imports
+from BinanceAPI import BinanceAPI
 from Database import Database
 from Orders import Orders
 from Tools import Tools
@@ -16,6 +17,8 @@ from time import sleep
 from time import sleep
 from binance.client import Client
 from sys import exit
+
+
 class Trading():
 
     # Define trade vars
@@ -26,14 +29,18 @@ class Trading():
 
     # Buy/Sell qty
     quantity = 0
+    sym = None
     
     # Define Custom import vars
-    client = BinanceAPI(config.api_key, config.api_secret)
+    
 
-    original_qty = client.get_asset_balance(asset=symbol)['free']
+    original_qty = 0
     all_qty = 0
     err_qty = 0
-    
+    sell_qty = 0
+
+    sym = None
+
     # float(step_size * math.floor(float(free)/step_size))
     step_size = 0
     tick_size = 0
@@ -42,6 +49,9 @@ class Trading():
     # Check bot status
     bot_status = "scan"
     partial_status = None
+  
+    #sym = self.option.symbol
+    
 
     # Define static vars
     WAIT_TIME_BUY_SELL = 2 # seconds
@@ -103,12 +113,14 @@ class Trading():
         self.amount = self.option.amount
         self.increasing = self.option.increasing
         self.decreasing = self.option.decreasing
-
+        self.sym = self.option.symbol
+        self.original_qty = self.option.hodl_qty
+        
     def buy(self, symbol, quantity, buyPrice):
 
         # Check last order
         self.checkorder()
-
+        
         try:
 
             # Create order
@@ -199,14 +211,19 @@ class Trading():
                 return
         
         sell_id = None
-        
-        self.all_qty = client.get_asset_balance(asset=symbol)['free']
-        try:
-            self.err_qty = self.all_qty - self.original_qty
-        except Exception, error:
-            self.err_qty = 0
 
-        quantity = self.format_quantity(quantity + elf.err_qty)
+        try:
+            self.all_qty = self.format_quantity(float(Orders.get_asset(symbol)['free']))
+        except Exception, error:
+            self.all_qty = 0
+        
+        try:
+            self.sell_qty = self.all_qty - self.original_qty
+        except Exception, error:
+            self.sell_qty = 0
+            
+
+        quantity = self.sell_qty
       
         flago = 0
         while (flago != 1):

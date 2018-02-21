@@ -113,7 +113,9 @@ Visit us on Discord [here](https://discord.gg/zQZNmbB)!
 ## Tip the fork maintainers
 
 #### Mark:
-To be added...
+
+- BTC: 1CDqvQagjBuUuFTLKnqWdLdUdi3ygt697D
+
 #### FitzZZ:
 If you want to support my work or just leave a little thanks, I'd appreciate a small donation towards my coffee fund :-) 
 

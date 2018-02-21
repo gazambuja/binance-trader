@@ -152,20 +152,33 @@ class Trading():
         If not successful, the order will be canceled.
         '''
         self.partial_status = None
-        time.sleep(self.WAIT_TIME_CHECK_BUY)
-        buy_order = Orders.get_order(symbol, orderId)
-        if not buy_order:
-            print self.log_wrap("SERVER DELAY! Rechecking...")
-            return
+        #time.sleep(self.WAIT_TIME_CHECK_BUY)
+        confirm = False
+        cancel_flag = True
+        seconds = 0
+        while not confirm:
+                sleep(1)
+                seconds += 1
+                buy_order = Orders.get_order(symbol, orderId)
 
-        if buy_order['status'] == 'FILLED' and buy_order['side'] == "BUY":
-            print self.log_wrap("Buy order filled... Try sell...")
-            self.total_buy = self.total_buy + 1
+                if not buy_order:
+                    print self.log_wrap("SERVER DELAY! Rechecking...")
+                    return
+                if buy_order['status'] == 'FILLED' and buy_order['side'] == "BUY":
+                    print self.log_wrap("Buy order filled... Try sell...")
+                    self.total_buy = self.total_buy + 1
+                    confirm = True
+                elif buy_order['status'] == 'PARTIALLY_FILLED' and buy_order['side'] == "BUY":
+                    print self.log_wrap("Buy order partially filled... Wait 1 more second...")
+                    quantity = self.check_partial_order(symbol, orderId, sell_price)         
+                    confirm = True
+                else:
+                    cancel_flag = False
+                    
+                if seconds == self.WAIT_TIME_CHECK_BUY:
+                    confirm = True
 
-        elif buy_order['status'] == 'PARTIALLY_FILLED' and buy_order['side'] == "BUY":
-            print self.log_wrap("Buy order partially filled... Wait 1 more second...")
-            quantity = self.check_partial_order(symbol, orderId, sell_price)
-        else:
+        if not cancel_flag:
             flago = 0
             while (flago != 1):
                 try:
@@ -174,10 +187,10 @@ class Trading():
                     print self.log_wrap("Keyerror")  
                 else:
                     flago = 1
-
             self.cancel(symbol, orderId)
             print self.log_wrap("Buy order fail (Not filled) Cancel order...")
             sleep(5)
+            
         print self.log_wrap("Checking..")
         order_status = None
         order_side = None
@@ -218,12 +231,12 @@ class Trading():
             self.all_qty = 0
         
         try:
-            self.sell_qty = self.all_qty - self.original_qty
+            self.sell_qty = self.format_quantity(float(self.all_qty - self.original_qty))
         except Exception, error:
             self.sell_qty = 0
             
-
-        quantity = self.sell_qty
+        if quantity < self.sell_qty:
+            quantity = self.format_quantity(float(self.sell_qty))
       
         flago = 0
         while (flago != 1):
@@ -646,8 +659,8 @@ class Trading():
 
             if endTime - startTime < self.wait_time:
 
-              # time.sleep(self.wait_time - (endTime - startTime))
-               sleep(5)
+               time.sleep(self.wait_time - (endTime - startTime))
+              #sleep(5)
                # 0 = Unlimited loop
                if self.option.loop > 0:
                    cycle = cycle + 1

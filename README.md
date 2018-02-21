@@ -154,19 +154,7 @@ Wanna get into crypto:
     
 ## Roadmap
 
-    - MACD indicator (buy/sell)
-    - Stop-Loss implementation
-    - Working modes
-      - profit: Find defined profit, buy and sell. (Ex: 1.3% profit)
-      - range:  Between target two price, buy and sell. (Ex: <= 0.00100 buy - >= 0.00150 sell )
-    - Binance/Bittrex/HitBTC Arbitrage  
-    
-    ...
-    
-    - October 7, 2017 Beta
-    - January 6, 2018 RC
-    - January 15, 2018 RC 1
-    - January 20, 2018 RC 2
+    See Project on GitHub -> https://github.com/TheFitzZZ/binance-trader/projects
      
 ## License
 
